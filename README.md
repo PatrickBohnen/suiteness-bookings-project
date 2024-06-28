@@ -2,11 +2,11 @@
 This project was for a job interview and it is meant to call a api that provides a list of bookings. Then on the main page is displays a summary of the bookings. The user can click on the Booking Id to take them to a more detailed page for each booking which also includes additional information on the hotel and guest.
 
 # Installing and Running
-This one is fairly straightfowrward.
-1: Download the project
-2: create a .env.local file with the variables 'api_url' and 'api_key' and enter the appropriate values.
-3: run 'npm install'
-4: run 'npm start' 
+This one is fairly straightfowrward.<br>
+1: Download the project<br>
+2: create a .env.local file with the variables 'api_url' and 'api_key' and enter the appropriate values.<br>
+3: run 'npm install'<br>
+4: run 'npm start' <br>
 5: go to http://localhost:5173/ and have fun!
 
 # Notes
