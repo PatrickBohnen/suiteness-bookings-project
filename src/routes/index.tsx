@@ -1,112 +1,61 @@
 import { component$ } from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import {
+  type DocumentHead,
+  routeLoader$
+} from "@builder.io/qwik-city";
+import { BookingOverview } from "~/components/bookingOverviewEntry";
+import type { bookingsOverviewDataType } from "~/components/types/bookingData";
 
-import Counter from "../components/starter/counter/counter";
-import Hero from "../components/starter/hero/hero";
-import Infobox from "../components/starter/infobox/infobox";
-import Starter from "../components/starter/next-steps/next-steps";
+
+
+export const useFetchBookingsOverview = routeLoader$(async (requestEvent) => {
+  const res = await fetch(`${requestEvent.env.get('api_url')}/bookings`, {
+    headers: {
+      'x-api-key': requestEvent.env.get('api_key')
+    }
+  });
+  const bookings = await res.json() as bookingsOverviewDataType[]; 
+
+  return bookings
+});
 
 export default component$(() => {
+  const bookingsOverview = useFetchBookingsOverview();
+
   return (
-    <>
-      <Hero />
-      <Starter />
-
-      <div role="presentation" class="ellipsis"></div>
-      <div role="presentation" class="ellipsis ellipsis-purple"></div>
-
-      <div class="container container-center container-spacing-xl">
-        <h3>
-          You can <span class="highlight">count</span>
-          <br /> on me
-        </h3>
-        <Counter />
-      </div>
-
-      <div class="container container-flex">
-        <Infobox>
-          <div q:slot="title" class="icon icon-cli">
-            CLI Commands
-          </div>
-          <>
-            <p>
-              <code>npm run dev</code>
-              <br />
-              Starts the development server and watches for changes
-            </p>
-            <p>
-              <code>npm run preview</code>
-              <br />
-              Creates production build and starts a server to preview it
-            </p>
-            <p>
-              <code>npm run build</code>
-              <br />
-              Creates production build
-            </p>
-            <p>
-              <code>npm run qwik add</code>
-              <br />
-              Runs the qwik CLI to add integrations
-            </p>
-          </>
-        </Infobox>
-
-        <div>
-          <Infobox>
-            <div q:slot="title" class="icon icon-apps">
-              Example Apps
-            </div>
-            <p>
-              Have a look at the <a href="/demo/flower">Flower App</a> or the{" "}
-              <a href="/demo/todolist">Todo App</a>.
-            </p>
-          </Infobox>
-
-          <Infobox>
-            <div q:slot="title" class="icon icon-community">
-              Community
-            </div>
-            <ul>
-              <li>
-                <span>Questions or just want to say hi? </span>
-                <a href="https://qwik.dev/chat" target="_blank">
-                  Chat on discord!
-                </a>
-              </li>
-              <li>
-                <span>Follow </span>
-                <a href="https://twitter.com/QwikDev" target="_blank">
-                  @QwikDev
-                </a>
-                <span> on Twitter</span>
-              </li>
-              <li>
-                <span>Open issues and contribute on </span>
-                <a href="https://github.com/QwikDev/qwik" target="_blank">
-                  GitHub
-                </a>
-              </li>
-              <li>
-                <span>Watch </span>
-                <a href="https://qwik.dev/media/" target="_blank">
-                  Presentations, Podcasts, Videos, etc.
-                </a>
-              </li>
-            </ul>
-          </Infobox>
-        </div>
-      </div>
-    </>
+    <div class="flex flex-col items-center">
+      <h1 class="text-4xl font-bold mb-6 max-w-screen-lg w-full">Bookings</h1>
+      <table class="bg-gray-200 text-gray-900 overflow-scroll text-center w-full max-w-screen-lg">
+        <thead>
+          <th class="border-solid border-2 border-gray-900 p-2">Booking Id</th>
+          <th class="border-solid border-2 border-gray-900 p-2">Paid</th>
+          <th class="border-solid border-2 border-gray-900 p-2">Cancelled</th>
+          <th class="border-solid border-2 border-gray-900 p-2">Total Cost</th>
+          <th class="border-solid border-2 border-gray-900 p-2">Check-in Date</th>
+          <th class="border-solid border-2 border-gray-900 p-2">Check-out Date</th>
+          <th class="border-solid border-2 border-gray-900 p-2">Nights</th>
+          <th class="border-solid border-2 border-gray-900 p-2">Hotel</th>
+          <th class="border-solid border-2 border-gray-900 p-2">Occupancy</th>
+        </thead>
+        <tbody>
+        {bookingsOverview.value.map(({ cancelled, checkInDate, checkOutDate, currencyCode, hotelName, id, occupancy, paid, total }) => (
+            <tr key={id}>
+              <BookingOverview cancelled={cancelled} checkInDate={checkInDate} checkOutDate={checkOutDate} currencyCode={currencyCode} hotelName={hotelName} id={id} occupancy={occupancy} paid={paid} total={total} />
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Welcome to Qwik",
+  title: "Sample Bookings Project",
   meta: [
     {
       name: "description",
-      content: "Qwik site description",
+      content: "A quick project to demonstrate Qwik and Tailwind",
     },
   ],
 };
+
